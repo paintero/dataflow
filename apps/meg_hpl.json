@@ -1,0 +1,16 @@
+{
+    "meta_data": {
+        "object_type": "app_def",
+        "name": "meg_hpl"
+    },
+    "tables" : [
+        "hpl_consistency_checker",
+        "adjustment_cost_center"
+    ],
+    "api" : {
+        "hpl_consistency_checker_POST_JSON": {
+            "method": "POST",
+            "input_type": "JSON"
+        }
+    }
+}

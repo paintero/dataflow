@@ -4,6 +4,11 @@
         "name": "hpl_consistency_checker"
     },
     "fields" : {
+        "context": {
+            "type": "TEXT",
+            "constraint":"NOT NULL",
+            "description": "Unique identifier of the source dataset."
+        },
         "megdp_platform_rec_timestamp": {
             "type": "TEXT",
             "constraint": "NOT NULL",
@@ -66,6 +71,9 @@
     },
     "primary_key": {
         "name": "pk_hpl_consistency_checker",
-        "fields": "megdp_platform_rec_timestamp, mis_system, cost_center_id, pnl_attribute"
+        "fields": "context, megdp_platform_rec_timestamp, business_date, mis_system, cost_center_id, pnl_attribute"
+    },
+    "batch": {
+        "fields": ["context", "business_date", "mis_system"]
     }
 }
