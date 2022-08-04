@@ -79,6 +79,7 @@ class App:
         logging.info("Creating App: " + app_name + ".")
         self.load_config(app_name)
         self.create_tables()
+        self.create_api_routes()
 
 
     # load the app config from json file
@@ -96,18 +97,26 @@ class App:
 
     # load and create all of the tables in this app
     def create_tables(self):
-        logging.info("Creating tables for App: " + self.config['meta_data']['name'])
+        logging.info("Creating tables for App: " + self.app_name())
         self.table_objects = {}
         for table in self.tables():
             self.table_objects[table] = Table(table)
 
     # get a list of the API routes
     def api_routes(self):
-        return self.config['api'].keys()
+        return self.config['api_routes'].keys()
 
     # check if api name is correct
     def is_api_route(self, api_route):
         return api_route in self.api_routes()
+
+    #  load and create all of the api_routes in this app
+    def create_api_routes(self):
+        logging.info("Creating API routes for App: " + self.app_name())
+        self.api_route_objects = {}
+        for api_route in self.api_routes():
+            self.api_route_objects[api_route] = Api_Route(self, api_route, self.config["api_routes"][api_route]) 
+
 
     # handle an api call
     def api_call(self, api_route, *args):
@@ -118,12 +127,12 @@ class App:
         if not self.is_api_route(api_route):
             general.raise_error("API route does not exist: " + api_route)
         
-        api_route_config = self.config["api"][api_route]
+        api_route_config = self.config["api_routes"][api_route]
 
         if not api_route_config["table"] in self.tables():
             general.raise_error("API route [" + api_route + "] refers to a table [" + api_route_config['table'] + "] that does not exist in the app.")
 
-        # it the API type is JSON then we can create the insert sql
+        # if the API type is JSON then we can create the insert sql
         # based on the fields in the data file.
         if api_route_config["type"] == "JSON":
             json_data_file_name = args[0]
@@ -133,11 +142,50 @@ class App:
             insert += api_route_config["table"]
             insert += "("
             values = ""
-            for field in json_data_config[api_route_config["table"]]['fields']:
+            for field in json_data_config[api_route]['fields']:
+                # note: add validation that fields match table def (or maybe do all validations when files are loaded)
                 insert += field + ", "
                 values += "?, "
             insert += ") values (" + values + ")"
-            print(insert)
+            #print(insert)
+            
+            # now take the data from the file and run executemany
+            for data_row in json_data_config[api_route]['data']:
+                # print(data_row)
+                pass
 
-        # now take the data from the file and run executemany
+
+class Api_Route:
+    """An object representing an api route for this app."""
+
+    # initialise api route object and load the api route config json
+    def __init__(self, parent_app, api_route, api_route_config):
+        self.parent_app = parent_app
+        self.api_route = api_route
+        self.api_route_config = api_route_config
+        logging.info("Creating API route: " + self.api_route)
+        self.validate_api_route_config()
+        
+    def validate_api_route_config(self):
+        # check the api route table matches a table object in the app
+        table_in_api_route_config = self.api_route_config['table']
+        list_of_tables_in_parent_app = self.parent_app.table_objects.keys()
+        if not table_in_api_route_config in list_of_tables_in_parent_app:
+            msg = "Table [" + self.api_route_config['table'] 
+            msg += "] referenced in API route [" + self.api_route
+            msg += "] is not a valid table in app [" + self.parent_app.app_name() + "]"
+            general.raise_error(msg)
+
+        # check the api fields match fields on the table
+        list_of_api_route_fields = self.api_route_config['fields']
+        print(list_of_api_route_fields)
+
+
+
+    
+
+
+
+
+        
 

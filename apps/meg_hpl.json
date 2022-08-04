@@ -7,12 +7,26 @@
         "hpl_consistency_checker",
         "adjustment_cost_center"
     ],
-    "api" : {
+    "api_routes" : {
         "hpl_consistency_checker_POST": {
             "table": "hpl_consistency_checker",
             "method": "POST",
             "type": "JSON",
-            "args": ["datafile_name"]
-        }
+            "args": ["datafile_name"],
+            "fields": [
+                "megdp_platform_rec_timestamp", 
+                "business_date", 
+                "cost_center_id", 
+                "pnl_attribute", 
+                "mis_system", 
+                "finance_pnl_usd", 
+                "constructed_pnl_usd", 
+                "raw_constructed_pnl_usd", 
+                "fx_reval_usd", 
+                "adjustment_usd", 
+                "finance_vs_constructed_variance_usd",
+                "_test_note"
+            ]
+        }    
     }
 }

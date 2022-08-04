@@ -1,5 +1,5 @@
 {
-    "hpl_consistency_checker": {
+    "hpl_consistency_checker_POST": {
         "fields": [
             "megdp_platform_rec_timestamp", 
             "business_date", 
