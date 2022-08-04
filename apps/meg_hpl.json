@@ -8,9 +8,11 @@
         "adjustment_cost_center"
     ],
     "api" : {
-        "hpl_consistency_checker_POST_JSON": {
+        "hpl_consistency_checker_POST": {
+            "table": "hpl_consistency_checker",
             "method": "POST",
-            "input_type": "JSON"
+            "type": "JSON",
+            "args": ["datafile_name"]
         }
     }
 }

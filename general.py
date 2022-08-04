@@ -34,21 +34,23 @@ def exec_sql(sql):
     db_connection.close()
 
 
-# General function for loading a json definition file
-def load_json_config(obj_type, obj_name):
+# General function for loading a json file
+def load_json_file(obj_type, obj_name):
     if obj_type == "app":
         folder = "apps"
     elif obj_type == "table":
         folder = "datamodel"
+    elif obj_type == "data":
+        folder = "data"
     else:
-        raise_error("Unrecognised json definition type: " + obj_type)
+        raise_error("Unrecognised JSON object type: " + obj_type)
 
     filepath = folder + "/" + obj_name + ".json"
     try:
         with open(filepath) as f:
-            config = json.load(f)
-            logging.info(folder + " config file loaded:" + filepath)
-            return config 
+            json_object = json.load(f)
+            logging.info(folder + " JSON file loaded:" + filepath)
+            return json_object 
     except FileNotFoundError:
-        raise_error(folder + " config file not found: " + filepath)
+        raise_error(folder + " JSON file not found: " + filepath)
 

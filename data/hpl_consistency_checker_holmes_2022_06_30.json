@@ -1,0 +1,40 @@
+{
+    "hpl_consistency_checker": {
+        "fields": [
+            "megdp_platform_rec_timestamp", 
+            "business_date", 
+            "cost_center_id", 
+            "pnl_attribute", 
+            "mis_system", 
+            "finance_pnl_usd", 
+            "constructed_pnl_usd", 
+            "raw_constructed_pnl_usd", 
+            "fx_reval_usd", 
+            "adjustment_usd", 
+            "finance_vs_constructed_variance_usd",
+            "_test_note"
+        ],
+        "data": [
+            ["2022-06-30T05:45:00.000Z", "2022-06-27", "48674", "ATM Vol", "HOLMES", 1000, 1000, 900, 100, 0, 0, "One in scope cost center."],
+            ["2022-06-30T05:45:00.000Z", "2022-06-27", "48674", "Basis", "HOLMES", 1000, 1000, 900, 100, 0, 0, "One in scope cost center."],
+            ["2022-06-30T05:45:00.000Z", "2022-06-27","48674", "Credit", "HOLMES", 1000, 1000, 900, 100, 0, 0, "One in scope cost center."],
+            ["2022-06-30T05:45:00.000Z", "2022-06-27","48674", "Interest Rate", "HOLMES", 1000, 1000, 900, 100, 0, 0, "One in scope cost center."],
+
+
+            ["2022-06-30T05:45:00.000Z", "2022-06-27","40194", "ATM Vol", "HOLMES", 1000, 1000, 900, 100, 0, 0, "In scope cost center."],
+            ["2022-06-30T05:45:00.000Z", "2022-06-27","40194", "Basis", "HOLMES", 1000, 1000, 900, 100, 0, 0, "In scope cost center."],
+            ["2022-06-30T05:45:00.000Z", "2022-06-27","40194", "Credit", "HOLMES", 1000, 1000, 900, 100, 0, 0, "In scope cost center."],
+            ["2022-06-30T05:45:00.000Z", "2022-06-27","40194", "Interest Rate", "HOLMES", 1000, 1000, 900, 100, 0, 0, "In scope cost center."],
+
+            ["2022-06-30T05:45:00.000Z", "2022-06-27","46839", "ATM Vol", "HOLMES", 1000, 1000, 900, 100, 0, 0, "Out of scope cost center."],
+            ["2022-06-30T05:45:00.000Z", "2022-06-27","46839", "Basis", "HOLMES", 1000, 1000, 900, 100, 0, 0, "Out of scope cost center."],
+            ["2022-06-30T05:45:00.000Z", "2022-06-27","46839", "Credit", "HOLMES", 1000, 1000, 900, 100, 0, 0, "Out of scope cost center."],
+            ["2022-06-30T05:45:00.000Z", "2022-06-27","46839", "Interest Rate", "HOLMES", 1000, 1000, 900, 100, 0, 0, "Out of scope cost center."]
+
+        ],
+        "feed_id" : {
+            "megdp_platform_rec_timestamp": "2022-06-30T05:45:00.000Z", 
+            "mis_system": "HOLMES"
+        }
+    }
+}
