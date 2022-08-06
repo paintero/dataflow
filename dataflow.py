@@ -7,7 +7,7 @@ logging.basicConfig(
     filemode="w", 
     format="%(asctime)s %(levelname)-8s %(message)s",
     datefmt="%H:%M:%S",
-    level=logging.DEBUG)
+    level=logging.INFO)
 
 class Table:
     """A database table object"""
@@ -120,39 +120,17 @@ class App:
 
     # handle an api call
     def api_call(self, api_route, *args):
-        logging.info("API call for App[" + self.app_name()
+        logging.info("Handling API call for App[" + self.app_name()
                      + "]: " + api_route)
         
         #validations
         if not self.is_api_route(api_route):
             general.raise_error("API route does not exist: " + api_route)
+
+        # call the API route's exec method
+        self.api_route_objects[api_route].exec(args)
+
         
-        api_route_config = self.config["api_routes"][api_route]
-
-        if not api_route_config["table"] in self.tables():
-            general.raise_error("API route [" + api_route + "] refers to a table [" + api_route_config['table'] + "] that does not exist in the app.")
-
-        # if the API type is JSON then we can create the insert sql
-        # based on the fields in the data file.
-        if api_route_config["type"] == "JSON":
-            json_data_file_name = args[0]
-            json_data_config = general.load_json_file("data", json_data_file_name)
-            # create insert statement
-            insert = "INSERT INTO "
-            insert += api_route_config["table"]
-            insert += "("
-            values = ""
-            for field in json_data_config[api_route]['fields']:
-                # note: add validation that fields match table def (or maybe do all validations when files are loaded)
-                insert += field + ", "
-                values += "?, "
-            insert += ") values (" + values + ")"
-            #print(insert)
-            
-            # now take the data from the file and run executemany
-            for data_row in json_data_config[api_route]['data']:
-                # print(data_row)
-                pass
 
 
 class Api_Route:
@@ -178,11 +156,79 @@ class Api_Route:
 
         # check the api fields match fields on the table
         list_of_api_route_fields = self.api_route_config['fields']
-        print(list_of_api_route_fields)
-
-
-
+        list_of_table_object_fields = self.parent_app.table_objects[table_in_api_route_config].fields()
+        missing_fields = general.elements_from_arr1_not_in_arr2(list_of_api_route_fields, list_of_table_object_fields)
+        if len(missing_fields) > 0:
+            msg = "Fields in the API route [" + self.api_route
+            msg += "] for App [" +self.parent_app.app_name()
+            msg += "] are not in the table: " + str(missing_fields)
+            general.raise_error(msg)
     
+    # if the API type is JSON then we can create the insert sql
+    # based on the fields in the data file.
+    def create_sql_insert(self):
+        if api_route_config["type"] == "JSON":
+            
+            
+            json_data_file_name = args[0]
+            json_data_config = general.load_json_file("data", json_data_file_name)
+            # create insert statement
+            insert = "INSERT INTO "
+            insert += api_route_config["table"]
+            insert += "("
+            values = ""
+            for field in json_data_config[api_route]['fields']:
+                # note: add validation that fields match table def (or maybe do all validations when files are loaded)
+                insert += field + ", "
+                values += "?, "
+            insert += ") values (" + values + ")"
+            #print(insert)
+            
+            # now take the data from the file and run executemany
+            for data_row in json_data_config[api_route]['data']:
+                # print(data_row)
+                pass
+
+    def validate_json_data_file(self, exec_params):
+        logging.info("Validating JSON data file " + exec_params["json_data_file_name"])
+        # check the api_route name in the data file matches that of this api route object
+        if not self.api_route == exec_params["json_data_file"]["api_route"]:
+            msg = "API route name[" + exec_params["json_data_file"]["api_route"]
+            msg += "] in data file [" + exec_params["json_data_file_name"]
+            msg += "] does not match the route name [" + self.api_route
+            msg += "] in the API route called."
+            general.raise_error(msg)
+        
+        # check that the field names in the datafile match those in the api
+        fields_in_data_file = exec_params["json_data_file"]['fields']
+        fields_in_api_route_config = self.api_route_config['fields']
+        extra_fields_in_data_file = general.elements_from_arr1_not_in_arr2(fields_in_data_file, fields_in_api_route_config)
+        fields_missing_from_data_file = general.elements_from_arr1_not_in_arr2(fields_in_api_route_config, fields_in_data_file)
+        msg = ""
+        if len(extra_fields_in_data_file) > 0:
+            msg = "There are fields " + str(extra_fields_in_data_file)
+            msg += " in the data file [" + exec_params["json_data_file_name"]
+            msg += "] that are not in the API route["
+            msg += self.api_route + "]."
+        if len(fields_missing_from_data_file) > 0:
+            if msg != "":
+                msg += "\n"
+            msg += "There are fields " + str(fields_missing_from_data_file)
+            msg += " missing from the data file [" + exec_params["json_data_file_name"] + "]"
+        if msg != "":
+            general.raise_error(msg)
+
+
+    def exec(self, args):
+        logging.debug("EXEC: " + self.api_route)
+        exec_params = {} # use this to hold the parameters associated with a specific api route execution
+        if self.api_route_config["method"] == "POST" and self.api_route_config["type"] == "JSON":
+            # POST data from a JSON data file
+            exec_params["json_data_file_name"] = args[0]
+            exec_params["json_data_file"] = general.load_json_file('data', exec_params["json_data_file_name"])
+            # validate json data file
+            self.validate_json_data_file(exec_params)
+
 
 
 

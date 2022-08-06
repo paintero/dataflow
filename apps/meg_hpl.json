@@ -14,6 +14,7 @@
             "type": "JSON",
             "args": ["datafile_name"],
             "fields": [
+                "context",
                 "megdp_platform_rec_timestamp", 
                 "business_date", 
                 "cost_center_id", 

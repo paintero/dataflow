@@ -27,7 +27,7 @@ def exec_sql(sql):
     for statement in sql.split(";"):
         statement += ";"
         if statement != ";":
-            logging.info("Executing sql: " + statement)
+            logging.debug("Executing sql: " + statement)
             db_cursor.execute(statement)
         
     db_connection.commit()
@@ -49,8 +49,17 @@ def load_json_file(obj_type, obj_name):
     try:
         with open(filepath) as f:
             json_object = json.load(f)
-            logging.info(folder + " JSON file loaded:" + filepath)
+            logging.info("JSON file loaded: " + filepath)
             return json_object 
     except FileNotFoundError:
         raise_error(folder + " JSON file not found: " + filepath)
+
+# General function for checking if the values in one array are all
+# in another array
+def elements_from_arr1_not_in_arr2(arr1, arr2):
+    x_not_in_y = []
+    for x in arr1:
+        if not x in arr2:
+                x_not_in_y.append(x)
+    return x_not_in_y
 
