@@ -1,9 +1,12 @@
 {
-    "meta_data": {
-        "object_type": "table_def",
-        "name": "adjustment_cost_center"
-    },
+    "name": "adjustment_cost_center",
+    "object_type": "table_def",
     "fields" : {
+        "context": {
+            "type": "TEXT",
+            "constraint":"NOT NULL",
+            "description": ""
+        },
         "megdp_platform_rec_timestamp": {
             "type": "TEXT",
             "constraint": "NOT NULL",

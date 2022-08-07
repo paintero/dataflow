@@ -10,27 +10,33 @@ import json
 # defined in the main module
 log = logging.getLogger(__name__)
 
+class HaltException(Exception): pass
 
 # General function to log an error, print it, and exit the program
 def raise_error(msg):
     logging.error(msg)
     print("ERROR: " + msg)
-    sys.exit(0)
+    #sys.exit(0)
+    raise HaltException("Stop")
 
 
-# General function to execute sql on the database
-def exec_sql(sql):
+# General function to execute an sql script on the database
+def exec_sql_script(sql_script):
     db_connection = sqlite3.connect('dataflow.db')
-    db_cursor = db_connection.cursor()
-    # Assume sql has more than one statement
-    # and loop through each as sqlite3 can only run one at a time
-    for statement in sql.split(";"):
-        statement += ";"
-        if statement != ";":
-            logging.debug("Executing sql: " + statement)
-            db_cursor.execute(statement)
-        
-    db_connection.commit()
+    with db_connection:
+        db_connection.executescript(sql_script)
+
+    db_connection.close()
+
+
+# General function to load a dataset on the database
+def exec_sql_many(sql_insert, dataset):
+    db_connection = sqlite3.connect('dataflow.db')
+    try:
+        with db_connection:
+            db_connection.executemany(sql_insert, dataset)
+    except sqlite3.IntegrityError as err:
+        raise_error("Database Integrity error. " + str(err))
     db_connection.close()
 
 
@@ -62,4 +68,21 @@ def elements_from_arr1_not_in_arr2(arr1, arr2):
         if not x in arr2:
                 x_not_in_y.append(x)
     return x_not_in_y
+
+# General function for converting an array to a comma separated
+# string of the elements. If replace_with is not blank then rather than 
+# returning the items, a comma separated list of replace_with will be returned.
+def array_to_comma_sep_string(arr, replace_with=""):
+    comma_sep_string = ""
+    count = 0
+    len_array = len(arr)
+    for item in arr:
+        if replace_with == "":
+            comma_sep_string += item
+        else:
+            comma_sep_string += replace_with
+        count += 1
+        if count >= len_array:
+            return comma_sep_string
+        comma_sep_string += ", "
 

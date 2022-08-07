@@ -1,0 +1,65 @@
+{
+    "api_route": "adjustment_cost_center_POST",
+    "fields": [
+        "context",
+        "megdp_platform_rec_timestamp",
+        "cost_center_id",
+        "sub_desk_id",
+        "sub_desk_name",
+        "frtb_cost_center_classification",
+        "frtb_scope",
+        "frtb_desk_code",
+        "frtb_desk_name",
+        "cost_center_fx_selldown",
+        "ubs_legal_entity_id",
+        "_test_note"
+    ],
+    "data": [
+        [
+            "context-1",
+            "2022-06-29T02:00:00.000Z", 
+            "48674",
+            "358092",
+            "EUR - Vanilla Options", 
+            "Trading Book", 
+            "IMA", 
+            "574725", 
+            "Rates Options Vanilla", 
+            "Standard",
+            "4001",
+            "One in scope cost center in a subdesk."
+        ],
+        [
+            "context-1",
+            "2022-06-29T02:00:00.000Z",
+            "40194", 
+            "375427",
+            "Structured Financing_US", 
+            "Non Trading Book", 
+            "", 
+            "", 
+            "Solutions Europe", 
+            "",
+            "4001",
+            "Out of scope cost center in subdesk with one in and one out of scope center."
+        ],
+        [
+            "context-1",
+            "2022-06-29T02:00:00.000Z",
+            "46839", 
+            "375427",
+            "Structured Financing_US", 
+            "Trading Book", 
+            "SA - IMA Candidate", 
+            "574753", 
+            "Structured Financing - AMER", 
+            "Standard",
+            "4001",
+            "In scope cost center in subdesk with one in and one out of scope center."
+        ]
+    ],
+    "feed_id" : {
+        "context": "context-1",
+        "megdp_platform_rec_timestamp": "2022-06-29T02:00:00.000Z"
+    }
+}

@@ -1,8 +1,6 @@
 {
-    "meta_data": {
-        "object_type": "table_def",
-        "name": "hpl_consistency_checker"
-    },
+    "name": "hpl_consistency_checker",
+    "object_type": "table_def",
     "fields" : {
         "context": {
             "type": "TEXT",

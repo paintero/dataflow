@@ -1,8 +1,6 @@
 {
-    "meta_data": {
-        "object_type": "app_def",
-        "name": "meg_hpl"
-    },
+    "name": "meg_hpl",
+    "object_type": "app_def",
     "tables" : [
         "hpl_consistency_checker",
         "adjustment_cost_center"
@@ -28,6 +26,26 @@
                 "finance_vs_constructed_variance_usd",
                 "_test_note"
             ]
-        }    
+        },
+        "adjustment_cost_center_POST": {
+            "table": "adjustment_cost_center",
+            "method": "POST",
+            "type": "JSON",
+            "args": ["datafile_name"],
+            "fields": [
+                "context",
+                "megdp_platform_rec_timestamp", 
+                "cost_center_id", 
+                "sub_desk_name", 
+                "frtb_cost_center_classification", 
+                "frtb_scope", 
+                "frtb_desk_code", 
+                "frtb_desk_name", 
+                "cost_center_fx_selldown", 
+                "ubs_legal_entity_id", 
+                "sub_desk_id", 
+                "_test_note"
+            ]
+        }
     }
 }

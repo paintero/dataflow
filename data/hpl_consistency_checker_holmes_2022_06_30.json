@@ -21,7 +21,6 @@
         ["context-1", "2022-06-30T05:45:00.000Z", "2022-06-27","48674", "Credit", "HOLMES", 1000, 1000, 900, 100, 0, 0, "One in scope cost center."],
         ["context-1", "2022-06-30T05:45:00.000Z", "2022-06-27","48674", "Interest Rate", "HOLMES", 1000, 1000, 900, 100, 0, 0, "One in scope cost center."],
 
-
         ["context-1", "2022-06-30T05:45:00.000Z", "2022-06-27","40194", "ATM Vol", "HOLMES", 1000, 1000, 900, 100, 0, 0, "In scope cost center."],
         ["context-1", "2022-06-30T05:45:00.000Z", "2022-06-27","40194", "Basis", "HOLMES", 1000, 1000, 900, 100, 0, 0, "In scope cost center."],
         ["context-1", "2022-06-30T05:45:00.000Z", "2022-06-27","40194", "Credit", "HOLMES", 1000, 1000, 900, 100, 0, 0, "In scope cost center."],
@@ -34,6 +33,7 @@
 
     ],
     "feed_id" : {
+        "context": "context-1",
         "megdp_platform_rec_timestamp": "2022-06-30T05:45:00.000Z", 
         "mis_system": "HOLMES"
     }
