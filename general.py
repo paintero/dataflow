@@ -16,8 +16,8 @@ class HaltException(Exception): pass
 def raise_error(msg):
     logging.error(msg)
     print("ERROR: " + msg)
-    #sys.exit(0)
-    raise HaltException("Stop")
+    sys.exit(0)
+    #raise HaltException("Stop")
 
 
 # General function to execute an sql script on the database

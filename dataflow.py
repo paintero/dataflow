@@ -7,7 +7,7 @@ logging.basicConfig(
     filemode="w", 
     format="%(asctime)s %(levelname)-8s %(message)s",
     datefmt="%H:%M:%S",
-    level=logging.INFO)
+    level=logging.DEBUG)
 
 
 class App:
@@ -119,23 +119,25 @@ class Api_Route:
         
     def validate_config(self):
         # check the api route table matches a table object in the app
-        table_in_config = self.config['table']
-        list_of_tables_in_parent_app = self.parent_app.table_objects.keys()
-        if not table_in_config in list_of_tables_in_parent_app:
-            msg = "Table [" + self.config['table'] 
-            msg += "] referenced in API route [" + self.api_route
-            msg += "] is not a valid table in app [" + self.parent_app.app_name() + "]"
-            general.raise_error(msg)
+        # if the api is a straight table load from JSON data file
+        if self.config['method'] == 'JSON':
+            table_in_config = self.config['table']
+            list_of_tables_in_parent_app = self.parent_app.table_objects.keys()
+            if not table_in_config in list_of_tables_in_parent_app:
+                msg = "Table [" + self.config['table'] 
+                msg += "] referenced in API route [" + self.api_route
+                msg += "] is not a valid table in app [" + self.parent_app.app_name() + "]"
+                general.raise_error(msg)
 
-        # check the api fields match fields on the table
-        list_of_api_route_fields = self.config['fields']
-        list_of_table_object_fields = self.parent_app.table_objects[table_in_config].fields()
-        missing_fields = general.elements_from_arr1_not_in_arr2(list_of_api_route_fields, list_of_table_object_fields)
-        if len(missing_fields) > 0:
-            msg = "Fields in the API route [" + self.api_route
-            msg += "] for App [" + self.parent_app.config['name']
-            msg += "] are not in the table: " + str(missing_fields)
-            general.raise_error(msg)
+            # check the api fields match fields on the table
+            list_of_api_route_fields = self.config['fields']
+            list_of_table_object_fields = self.parent_app.table_objects[table_in_config].fields()
+            missing_fields = general.elements_from_arr1_not_in_arr2(list_of_api_route_fields, list_of_table_object_fields)
+            if len(missing_fields) > 0:
+                msg = "Fields in the API route [" + self.api_route
+                msg += "] for App [" + self.parent_app.config['name']
+                msg += "] are not in the table: " + str(missing_fields)
+                general.raise_error(msg)
     
 
     def validate_json_data_file(self):
@@ -195,6 +197,7 @@ class Api_Route:
         self.exec_params = {} # use this to hold the parameters associated with a specific api route execution
         if self.config["method"] == "POST" and self.config["type"] == "JSON":
             # POST data from a JSON data file
+            # The api route fields are expected to be the same as the table def
             self.exec_params["json_data_file_name"] = args[0]
             self.exec_params["json_data_file"] = general.load_json_file('data', self.exec_params["json_data_file_name"])
             self.validate_json_data_file()

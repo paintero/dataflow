@@ -1,0 +1,25 @@
+{
+    "name": "frtb_in_scope_map",
+    "object_type": "table_def",
+    "fields" : {
+        "frtb_scope": {
+            "type": "TEXT",
+            "constraint":"NOT NULL",
+            "description": ""
+        },
+        "frtb_cost_center_classification": {
+            "type": "TEXT",
+            "constraint":"NOT NULL",
+            "description": ""
+        },
+        "frtb_in_scope": {
+            "type": "TEXT",
+            "constraint":"NOT NULL",
+            "description": ""
+        }
+    },
+    "primary_key": {
+        "name": "pk_frtb_in_scope_map",
+        "fields": "frtb_scope, frtb_cost_center_classification, frtb_in_scope"
+    }
+}
