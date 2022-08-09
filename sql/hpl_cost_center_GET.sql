@@ -11,4 +11,5 @@ select  h.business_date,
 from    hpl_consistency_checker h
 left join adjustment_cost_center a ON h.cost_center_id = a.cost_center_id
 left join frtb_in_scope_map f ON a.frtb_cost_center_classification = f.frtb_cost_center_classification
-                            AND a.frtb_scope = f.frtb_scope;
+                            AND a.frtb_scope = f.frtb_scope
+where   h.business_date = :business_date and a.sub_desk_id = :sub_desk_id

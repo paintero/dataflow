@@ -11,58 +11,24 @@
             "type": "JSON",
             "method": "POST",
             "table": "hpl_consistency_checker",
-            "args": ["datafile_name"],
-            "fields": [
-                "context",
-                "megdp_platform_rec_timestamp", 
-                "business_date", 
-                "cost_center_id", 
-                "pnl_attribute", 
-                "mis_system", 
-                "finance_pnl_usd", 
-                "constructed_pnl_usd", 
-                "raw_constructed_pnl_usd", 
-                "fx_reval_usd", 
-                "adjustment_usd", 
-                "finance_vs_constructed_variance_usd",
-                "_test_note"
-            ]
+            "args": ["datafile_name"]
         },
         "adjustment_cost_center_POST": {
             "type": "JSON",
             "method": "POST",
             "table": "adjustment_cost_center",
-            "args": ["datafile_name"],
-            "fields": [
-                "context",
-                "megdp_platform_rec_timestamp", 
-                "cost_center_id", 
-                "sub_desk_id", 
-                "sub_desk_name", 
-                "frtb_cost_center_classification", 
-                "frtb_scope", 
-                "frtb_desk_code", 
-                "frtb_desk_name", 
-                "cost_center_fx_selldown", 
-                "ubs_legal_entity_id", 
-                "_test_note"
-            ]
+            "args": ["datafile_name"]
         },
         "frtb_in_scope_map_POST": {
             "type": "JSON",
             "method": "POST",
             "table": "frtb_in_scope_map",
-            "args": ["datafile_name"],
-            "fields": [
-                "frtb_scope",
-                "frtb_cost_center_classification", 
-                "frtb_in_scope"
-            ]
+            "args": ["datafile_name"]
         },
         "hpl_cost_center_GET": {
             "type": "SQL",
             "method": "GET",
-            "sql_function": "hpl_cost_center_GET",
+            "sql_file": "hpl_cost_center_GET",
             "args": ["business_date", "sub_desk_id"]
         }
     }

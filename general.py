@@ -20,6 +20,32 @@ def raise_error(msg):
     #raise HaltException("Stop")
 
 
+# General function to execute an sql statement on the database
+# and return the results
+def exec_sql(sql, params):
+    db_connection = sqlite3.connect('dataflow.db')
+    with db_connection:
+        # get the whole results set
+        cursor = db_connection.cursor()
+        cursor.execute(sql, params)
+        data = cursor.fetchall()
+        # get the column names
+        db_connection.row_factory = sqlite3.Row
+        cursor = db_connection.cursor()
+        cursor.execute(sql, params)
+        headings = cursor.fetchone()
+
+    db_connection.close()
+    results = {}
+    results['headings'] = headings.keys()
+    # convert tuple rows to lists
+    data_list = []
+    for row in data:
+        data_list.append(list(row))
+    results['data'] = data_list
+    return results
+
+
 # General function to execute an sql script on the database
 def exec_sql_script(sql_script):
     db_connection = sqlite3.connect('dataflow.db')
@@ -55,10 +81,22 @@ def load_json_file(obj_type, obj_name):
     try:
         with open(filepath) as f:
             json_object = json.load(f)
-            logging.info("JSON file loaded: " + filepath)
+            logging.debug("JSON file loaded: " + filepath)
             return json_object 
     except FileNotFoundError:
         raise_error(folder + " JSON file not found: " + filepath)
+
+# General function for loading a file to a string variable (used to load sql files)
+def load_text_file(file_name):
+    filepath =  "sql/" + file_name + ".sql"
+    try:
+        with open(filepath) as f:
+            sql = f.read()
+            logging.debug("SQL file loaded: " + filepath)
+            return sql 
+    except FileNotFoundError:
+        raise_error(folder + " SQL file not found: " + filepath)
+
 
 # General function for checking if the values in one array are all
 # in another array

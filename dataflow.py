@@ -1,6 +1,7 @@
 import json
 import logging
 import general
+import sqlite3
 
 logging.basicConfig(
     filename="dataflow.log", 
@@ -149,12 +150,13 @@ class Api_Route:
             msg += "] does not match the route name [" + self.api_route
             msg += "] in the API route called."
             general.raise_error(msg)
-        
-        # check that the field names in the datafile match those in the api
+
+    def validate_data_fields_match_table_fields(self):    
+        # check that the field names in the datafile match those in the table definition
         fields_in_data_file = self.exec_params["json_data_file"]['fields']
-        fields_in_api_route_config = self.config['fields']
-        extra_fields_in_data_file = general.elements_from_arr1_not_in_arr2(fields_in_data_file, fields_in_api_route_config)
-        fields_missing_from_data_file = general.elements_from_arr1_not_in_arr2(fields_in_api_route_config, fields_in_data_file)
+        fields_in_table = self.parent_app.table_objects[self.config['table']].fields()
+        extra_fields_in_data_file = general.elements_from_arr1_not_in_arr2(fields_in_data_file, fields_in_table)
+        fields_missing_from_data_file = general.elements_from_arr1_not_in_arr2(fields_in_table, fields_in_data_file)
         msg = ""
         if len(extra_fields_in_data_file) > 0:
             msg = "There are fields " + str(extra_fields_in_data_file)
@@ -174,13 +176,14 @@ class Api_Route:
         insert_sql = "INSERT INTO "
         insert_sql += self.config['table']            
         insert_sql += " ("
-        insert_sql += general.array_to_comma_sep_string(self.config['fields'])
+        insert_sql += general.array_to_comma_sep_string(self.exec_params["json_data_file"]['fields'])
         insert_sql += ") VALUES ("
-        insert_sql += general.array_to_comma_sep_string(self.config['fields'], "?")
+        insert_sql += general.array_to_comma_sep_string(self.exec_params["json_data_file"]['fields'], "?")
         insert_sql += ")"
         return insert_sql
 
     def load_data_from_json(self):
+        self.validate_data_fields_match_table_fields()
         sql_insert_statement = self.sql_insert_statement()
         logging.debug(sql_insert_statement)
         data=[]
@@ -191,10 +194,13 @@ class Api_Route:
         logging.debug(data)
         general.exec_sql_many(sql_insert_statement, data)
 
+        
+
     # execute the api route with the parameters passed in
     def exec(self, args):
-        logging.debug("EXEC: " + self.api_route)
+        logging.debug("Executing API: " + self.api_route)
         self.exec_params = {} # use this to hold the parameters associated with a specific api route execution
+        self.exec_params["args"] = {} # this will hold the API arguments as name-value pairs
         if self.config["method"] == "POST" and self.config["type"] == "JSON":
             # POST data from a JSON data file
             # The api route fields are expected to be the same as the table def
@@ -202,3 +208,20 @@ class Api_Route:
             self.exec_params["json_data_file"] = general.load_json_file('data', self.exec_params["json_data_file_name"])
             self.validate_json_data_file()
             self.load_data_from_json()
+        
+        elif self.config["method"] == "GET" and self.config["type"] == "SQL":
+            # check we have the number of args expected by the API
+            if len(args) != len(self.config['args']):
+                general.raise_error("Missing arguments in API call " + self.api_route)
+            # create name/value pairs for the arg names and the arg values provided
+            for n in range(0, len(args)):
+                self.exec_params["args"][self.config["args"][n]] = args[n]
+            logging.debug(self.exec_params["args"])
+            sql = general.load_text_file(self.config['sql_file'])
+            logging.debug(sql)
+            
+            results = general.exec_sql(sql, self.exec_params["args"])
+            print(results)
+
+
+
