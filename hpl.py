@@ -1,4 +1,7 @@
 from dataflow import *
+from eventq import *
+
+event_q = EventQ()
 
 meg_hpl = App('meg_hpl')
 meg_hpl.api_call("frtb_in_scope_map_POST", "frtb_in_scope_map")
