@@ -2,6 +2,7 @@ import json
 import logging
 import general
 import sqlite3
+from eventq import *
 
 logging.basicConfig(
     filename="dataflow.log", 
@@ -11,15 +12,32 @@ logging.basicConfig(
     level=logging.DEBUG)
 
 
+class System:
+    """An object representing a system of applications"""
+    def __init__(self, sys_name):
+        self.app_objects = {}
+        self.name = sys_name
+        logging.info("Created system: " + sys_name)
+
+    def register_application(self, app_name, app_object):
+        self.app_objects[app_name] = app_object
+        print(self.app_objects)
+        msg = "Registered Application " + app_name
+        msg += " with System " + self.name
+        logging.info(msg)
+
+
 class App:
     """An app object representing an IT application (or component)."""
 
     # initialise app object and load the application config json
-    def __init__(self, app_name):
+    def __init__(self, app_name, system_object):
         logging.info("Creating App: " + app_name + ".")
         self.load_config(app_name)
         self.create_tables()
         self.create_api_routes()
+        system_object.register_application(app_name, self)
+
 
     # load the app config from json file
     def load_config(self, app_name):
@@ -194,7 +212,19 @@ class Api_Route:
         logging.debug(data)
         general.exec_sql_many(sql_insert_statement, data)
 
-        
+
+    def update_eventq(self):
+        print("EVENT MESSAGES")
+        if 'event_messages' in self.exec_params['json_data_file']:
+            parent_app_object = self.parent_app
+            for em in self.exec_params['json_data_file']['event_messages']:
+                topic = em['topic']
+                api_callback = em['api_callback']
+                eventm = Event_Message(parent_app_object, topic, api_callback)
+                print("Message: " + eventm.message())
+                eventq.append(eventm)
+        else:
+            print("NADA")    
 
     # execute the api route with the parameters passed in
     def exec(self, args):
@@ -208,6 +238,7 @@ class Api_Route:
             self.exec_params["json_data_file"] = general.load_json_file('data', self.exec_params["json_data_file_name"])
             self.validate_json_data_file()
             self.load_data_from_json()
+            self.update_eventq()
         
         elif self.config["method"] == "GET" and self.config["type"] == "SQL":
             # check we have the number of args expected by the API
