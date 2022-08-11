@@ -17,6 +17,7 @@ class System:
     def __init__(self, sys_name):
         self.app_objects = {}
         self.name = sys_name
+        self.eventq = EventQ()
         logging.info("Created system: " + sys_name)
 
     def register_application(self, app_name, app_object):
@@ -33,10 +34,14 @@ class App:
     # initialise app object and load the application config json
     def __init__(self, app_name, system_object):
         logging.info("Creating App: " + app_name + ".")
+        # so the app know which system it is part of
+        self.parent_system = system_object
         self.load_config(app_name)
         self.create_tables()
         self.create_api_routes()
+        # so the system knows which apps it has
         system_object.register_application(app_name, self)
+
 
 
     # load the app config from json file
@@ -214,17 +219,15 @@ class Api_Route:
 
 
     def update_eventq(self):
-        print("EVENT MESSAGES")
         if 'event_messages' in self.exec_params['json_data_file']:
             parent_app_object = self.parent_app
             for em in self.exec_params['json_data_file']['event_messages']:
                 topic = em['topic']
                 api_callback = em['api_callback']
                 eventm = Event_Message(parent_app_object, topic, api_callback)
-                print("Message: " + eventm.message())
-                eventq.append(eventm)
+                self.parent_app.parent_system.eventq.append(eventm)
         else:
-            print("NADA")    
+            pass    
 
     # execute the api route with the parameters passed in
     def exec(self, args):

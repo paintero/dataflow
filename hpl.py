@@ -1,7 +1,4 @@
 from dataflow import *
-from eventq import *
-
-eventq = EventQ()
 
 system = System("PNL System")
 meg_hpl = App('meg_hpl', system)
@@ -11,3 +8,4 @@ meg_hpl.api_call("hpl_consistency_checker_POST", "hpl_consistency_checker_ec_202
 meg_hpl.api_call("hpl_consistency_checker_POST", "hpl_consistency_checker_holmes_2022_06_30")
 #meg_hpl.api_call("hpl_cost_center_GET", "2022-06-27", "HOLMES")
 #meg_hpl.api_call("hpl_cost_center_GET", "2022-06-27", "EC")
+system.eventq.print_eventq()
