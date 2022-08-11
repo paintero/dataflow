@@ -1,0 +1,43 @@
+{
+    "name": "meg_hpl",
+    "object_type": "app_def",
+    "folder": "meg_hpl",
+    "tables" : [
+        "hpl_consistency_checker",
+        "adjustment_cost_center",
+        "frtb_in_scope_map"
+    ],
+    "api_routes" : {
+        "hpl_consistency_checker_POST": {
+            "type": "JSON",
+            "method": "POST",
+            "table": "hpl_consistency_checker",
+            "args": ["datafile_name"],
+            "event_messages": [
+                {
+                    "topic": "hpl_cost_center",
+                    "api_route_callback": "hpl_cost_center_GET",
+                    "params": ["business_date", "mis_system"]
+                }
+            ]
+        },
+        "adjustment_cost_center_POST": {
+            "type": "JSON",
+            "method": "POST",
+            "table": "adjustment_cost_center",
+            "args": ["datafile_name"]
+        },
+        "frtb_in_scope_map_POST": {
+            "type": "JSON",
+            "method": "POST",
+            "table": "frtb_in_scope_map",
+            "args": ["datafile_name"]
+        },
+        "hpl_cost_center_GET": {
+            "type": "SQL",
+            "method": "GET",
+            "sql_file": "hpl_cost_center_GET",
+            "args": ["business_date", "mis_system"]
+        }
+    }
+}

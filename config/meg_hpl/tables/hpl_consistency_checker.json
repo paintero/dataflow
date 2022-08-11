@@ -1,0 +1,77 @@
+{
+    "name": "hpl_consistency_checker",
+    "object_type": "table_def",
+    "fields" : {
+        "context": {
+            "type": "TEXT",
+            "constraint":"NOT NULL",
+            "description": "Unique identifier of the source dataset."
+        },
+        "megdp_platform_rec_timestamp": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": "Date the batch was added to MEG."
+        },
+        "business_date": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": "The logical business date of the data. Also reporting date."
+        },
+        "cost_center_id": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": "Cost Center unique code."
+        },
+        "pnl_attribute": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": "The P&L attribute name."
+        },
+        "mis_system": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": "The MIS source system. Either EC or Holmes."
+        },
+        "finance_pnl_usd": {
+            "type": "REAL",
+            "constraint": "NOT NULL",
+            "description": "The P&L amount from the Finance MIS system."
+        },
+        "constructed_pnl_usd": {
+            "type": "REAL",
+            "constraint": "NOT NULL",
+            "description": "The total constructed hypo P&L."
+        },
+        "raw_constructed_pnl_usd": {
+            "type": "REAL",
+            "constraint": "NOT NULL",
+            "description": "The front office component of the constructed hypo P&L."
+        },
+        "fx_reval_usd": {
+            "type": "REAL",
+            "constraint": "NOT NULL",
+            "description": "The FX reval component of the constructed hpyo P&L."
+        },
+        "adjustment_usd": {
+            "type": "REAL",
+            "constraint": "NOT NULL",
+            "description": "The adjustment component of the constructed hpyo P&L."
+        },
+        "finance_vs_constructed_variance_usd": {
+            "type": "REAL",
+            "constraint": "NOT NULL",
+            "description": "The adjustment component of the constructed hpyo P&L."
+        },
+        "_test_note": {
+            "type": "TEXT",
+            "description": "Meta attribute used to describe this data in relation to testing."
+        }
+    },
+    "primary_key": {
+        "name": "pk_hpl_consistency_checker",
+        "fields": "context, megdp_platform_rec_timestamp, business_date, mis_system, cost_center_id, pnl_attribute"
+    },
+    "batch": {
+        "fields": ["context", "business_date", "mis_system"]
+    }
+}

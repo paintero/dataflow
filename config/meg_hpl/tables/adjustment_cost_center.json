@@ -1,0 +1,69 @@
+{
+    "name": "adjustment_cost_center",
+    "object_type": "table_def",
+    "fields" : {
+        "context": {
+            "type": "TEXT",
+            "constraint":"NOT NULL",
+            "description": ""
+        },
+        "megdp_platform_rec_timestamp": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": "Date the batch was added to MEG."
+        },
+        "cost_center_id": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": " "
+        },
+        "sub_desk_name": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": " "
+        },
+        "frtb_cost_center_classification": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": " "
+        },
+        "frtb_scope": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": " "
+        },
+        "frtb_desk_code": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": " "
+        },
+        "frtb_desk_name": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": " "
+        },
+        "cost_center_fx_selldown": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": " "
+        },
+        "ubs_legal_entity_id": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": " "
+        },
+        "sub_desk_id": {
+            "type": "TEXT",
+            "constraint": "NOT NULL",
+            "description": " "
+        },
+        "_test_note": {
+            "type": "TEXT",
+            "description": "Meta attribute used to describe this data in relation to testing."
+        }
+    },
+    "primary_key": {
+        "name": "pk_fdd_adjustment_cost_center",
+        "fields": "megdp_platform_rec_timestamp, cost_center_id"
+    }
+}

@@ -67,17 +67,21 @@ def exec_sql_many(sql_insert, dataset):
 
 
 # General function for loading a json file
-def load_json_file(obj_type, obj_name):
+def load_json_file(obj_type, obj_name, app_base_folder):
     if obj_type == "app":
-        folder = "apps"
+        folder = ""
     elif obj_type == "table":
-        folder = "datamodel"
+        folder = "tables"
     elif obj_type == "data":
         folder = "data"
     else:
         raise_error("Unrecognised JSON object type: " + obj_type)
 
-    filepath = folder + "/" + obj_name + ".json"
+    filepath = app_base_folder + "/"
+    if folder != "":
+        filepath += folder + "/" 
+    filepath += obj_name + ".json"
+
     try:
         with open(filepath) as f:
             json_object = json.load(f)
@@ -87,8 +91,8 @@ def load_json_file(obj_type, obj_name):
         raise_error(folder + " JSON file not found: " + filepath)
 
 # General function for loading a file to a string variable (used to load sql files)
-def load_text_file(file_name):
-    filepath =  "sql/" + file_name + ".sql"
+def load_text_file(file_name, app_base_folder):
+    filepath =  app_base_folder + "/sql/" + file_name + ".sql"
     try:
         with open(filepath) as f:
             sql = f.read()

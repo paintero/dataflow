@@ -18,6 +18,16 @@ class Event_Message:
     def message(self):
         return str(self.event_message)
 
+class Subscriber:
+    def __init__(self, app_name, app_object, topic):
+        self.subscriber = {
+            "app_name": app_name,
+            "app_object": app_object,
+            "topic": topic
+        }
+
+    def string(self):
+        return str(self.subscriber)
     
 class EventQ:
     def __init__(self):

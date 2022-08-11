@@ -34,9 +34,10 @@ class App:
     # initialise app object and load the application config json
     def __init__(self, app_name, system_object):
         logging.info("Creating App: " + app_name + ".")
-        # so the app know which system it is part of
+        # so the app knows which system it is part of
         self.parent_system = system_object
         self.load_config(app_name)
+        self.app_base_folder = "config/" + self.config['folder']
         self.create_tables()
         self.create_api_routes()
         # so the system knows which apps it has
@@ -46,22 +47,25 @@ class App:
 
     # load the app config from json file
     def load_config(self, app_name):
-        self.config = general.load_json_file("app", app_name)
+        self.config = general.load_json_file("app", app_name, "config")
 
     # load and create all of the tables in this app
     def create_tables(self):
         logging.info("Creating tables for App: " + self.config['name'])
         self.table_objects = {}
         for table in self.config['tables']:
-            self.table_objects[table] = Table(table)
+            self.table_objects[table] = Table(table, self)
 
     #  load and create all of the api_routes in this app
     def create_api_routes(self):
         logging.info("Creating API routes for App: " + self.config['name'])
         self.api_route_objects = {}
-        for api_route in self.config['api_routes'].keys():
-            self.api_route_objects[api_route] = Api_Route(self, api_route, self.config["api_routes"][api_route]) 
-
+        if 'api_routes' in self.config:
+            for api_route in self.config['api_routes'].keys():
+                self.api_route_objects[api_route] = Api_Route(self, api_route, self.config["api_routes"][api_route]) 
+        else:
+            logging.info("There are no API routes defined for app " + self.config['name'])
+            
     # check if api route name provided to the handler is that of an existing api route
     def is_api_route(self, api_route):
         return api_route in self.config['api_routes'].keys()
@@ -83,9 +87,10 @@ class Table:
     """A database table object"""
 
     # initialise table object and load table def json
-    def __init__(self, table_name):
+    def __init__(self, table_name, app_object):
         logging.info("Creating Table: " + table_name + ".")
-        self.config = general.load_json_file("table", table_name)
+        self.parent_app = app_object
+        self.config = general.load_json_file("table", table_name, self.parent_app.app_base_folder)
         self.create_table()
 
     # return a list of the fields in the table
@@ -238,7 +243,7 @@ class Api_Route:
             # POST data from a JSON data file
             # The api route fields are expected to be the same as the table def
             self.exec_params["json_data_file_name"] = args[0]
-            self.exec_params["json_data_file"] = general.load_json_file('data', self.exec_params["json_data_file_name"])
+            self.exec_params["json_data_file"] = general.load_json_file('data', self.exec_params["json_data_file_name"], self.parent_app.app_base_folder)
             self.validate_json_data_file()
             self.load_data_from_json()
             self.update_eventq()
@@ -251,7 +256,7 @@ class Api_Route:
             for n in range(0, len(args)):
                 self.exec_params["args"][self.config["args"][n]] = args[n]
             logging.debug(self.exec_params["args"])
-            sql = general.load_text_file(self.config['sql_file'])
+            sql = general.load_text_file(self.config['sql_file'], self.parent_app.app_base_folder)
             logging.debug(sql)
             
             results = general.exec_sql(sql, self.exec_params["args"])

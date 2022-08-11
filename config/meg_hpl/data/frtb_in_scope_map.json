@@ -1,0 +1,13 @@
+{
+    "api_route": "frtb_in_scope_map_POST",
+    "fields": [
+        "frtb_scope",
+        "frtb_cost_center_classification",
+        "frtb_in_scope"
+    ],
+    "data": [
+        ["IMA", "Trading Book", "IN SCOPE"],
+        ["SA - IMA Candidate", "Trading Book", "IN SCOPE"]
+    ]
+}    
+        

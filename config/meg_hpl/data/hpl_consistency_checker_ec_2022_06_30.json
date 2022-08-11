@@ -1,0 +1,27 @@
+{
+    "api_route": "hpl_consistency_checker_POST",
+    "fields": ["context", "megdp_platform_rec_timestamp", "business_date", "cost_center_id", "pnl_attribute", "mis_system", "finance_pnl_usd", "constructed_pnl_usd", "raw_constructed_pnl_usd", "fx_reval_usd", "adjustment_usd", "finance_vs_constructed_variance_usd", "_test_note"],
+    "data": [
+        ["ec 2022-06-30", "2022-06-30T05:30:00.000Z", "2022-06-27","44325", "ATM Vol", "EC", 1000, 1000, 900, 100, 0, 0, "In scope cost center. EQ DS"],
+        ["ec 2022-06-30", "2022-06-30T05:30:00.000Z", "2022-06-27","44325", "Basis", "EC", 1000, 1000, 900, 100, 0, 0, "In scope cost center. EQ DS"],
+        ["ec 2022-06-30", "2022-06-30T05:30:00.000Z", "2022-06-27","44325", "Credit", "EC", 1000, 1000, 900, 100, 0, 0, "In scope cost center. EQ DS"],
+        ["ec 2022-06-30", "2022-06-30T05:30:00.000Z", "2022-06-27","44325", "Interest Rate", "EC", 1000, 1000, 900, 100, 0, 0, "In scope cost center. EQ DS"],
+
+        ["ec 2022-06-30", "2022-06-30T05:30:00.000Z", "2022-06-27","44326", "ATM Vol", "EC", 1000, 1000, 900, 100, 0, 0, "Out of scope made up cost center. EQ DS"],
+        ["ec 2022-06-30", "2022-06-30T05:30:00.000Z", "2022-06-27","44326", "Basis", "EC", 1000, 1000, 900, 100, 0, 0, "Out of scope made up cost center. EQ DS"],
+        ["ec 2022-06-30", "2022-06-30T05:30:00.000Z", "2022-06-27","44326", "Credit", "EC", 1000, 1000, 900, 100, 0, 0, "Out of scope made up cost center. EQ DS"],
+        ["ec 2022-06-30", "2022-06-30T05:30:00.000Z", "2022-06-27","44326", "Interest Rate", "EC", 1000, 1000, 900, 100, 0, 0, "Out of scope made up cost center. EQ DS"]
+    ],
+    "feed_id" : {
+        "context": "ec 2022-06-30",
+        "megdp_platform_rec_timestamp": "2022-06-30T05:30:00.000Z", 
+        "mis_system": "EC"
+    },
+    "event_messages": [
+        {
+            "topic": "hpl_cost_center",
+            "api_callback": "hpl_cost_center_GET('2022-06-27', 'EC')"
+        }
+    ]
+
+}
