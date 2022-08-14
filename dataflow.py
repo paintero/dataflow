@@ -40,15 +40,25 @@ class App:
         self.app_base_folder = "config/" + self.config['folder']
         self.create_tables()
         self.create_api_routes()
+        self.subscribe_to_event_topics()
         # so the system knows which apps it has
         system_object.register_application(app_name, self)
 
+    def subscribe_to_event_topics(self):
+        if 'event_topic_registrations' in self.config:
+            logging.info("Registering event Q subscriptions")
+            for topic in self.config['event_topic_registrations']:
+                s = Subscriber(self, self.config['name'], topic)
+                self.parent_system.eventq.subscribe(s)
+                logging.info("Subscribing App " + self.config['name'] + " to event Q topic " + topic)
 
-
+    def notify(self, message):
+        print("MESSAGE RECEIVED by " + self.config['name'] + " : " + message.message())
+        # now action the event message
+    
     # load the app config from json file
     def load_config(self, app_name):
         self.config = general.load_json_file("app", app_name, "config")
-
     # load and create all of the tables in this app
     def create_tables(self):
         logging.info("Creating tables for App: " + self.config['name'])
@@ -65,7 +75,7 @@ class App:
                 self.api_route_objects[api_route] = Api_Route(self, api_route, self.config["api_routes"][api_route]) 
         else:
             logging.info("There are no API routes defined for app " + self.config['name'])
-            
+
     # check if api route name provided to the handler is that of an existing api route
     def is_api_route(self, api_route):
         return api_route in self.config['api_routes'].keys()

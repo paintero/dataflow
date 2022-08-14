@@ -22,5 +22,11 @@
         "context": "context-2",
         "megdp_platform_rec_timestamp": "2022-06-30T05:45:00.000Z", 
         "mis_system": "HOLMES"
-    }
+    },
+    "event_messages": [
+        {
+            "topic": "hpl_cost_center",
+            "api_callback": "hpl_cost_center_GET('2022-06-27', 'HOLMES')"
+        }
+    ]
 }

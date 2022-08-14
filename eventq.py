@@ -19,7 +19,7 @@ class Event_Message:
         return str(self.event_message)
 
 class Subscriber:
-    def __init__(self, app_name, app_object, topic):
+    def __init__(self, app_object, app_name, topic):
         self.subscriber = {
             "app_name": app_name,
             "app_object": app_object,
@@ -32,7 +32,7 @@ class Subscriber:
 class EventQ:
     def __init__(self):
         self.eventq = []
-        self.subcribers = []
+        self.subscriptions = []
         self.latest_id = 0
 
     def append(self, message):
@@ -40,14 +40,17 @@ class EventQ:
         message.set_id(self.latest_id)
         self.eventq.append(message)
         logging.debug("Event message added to eventQ: " + message.message())
-        # self.notify_subscribers()
+        self.notify_subscribers(message)
 
-    def register_subscriber(self, subscriber):
-        self.subscribers.append(subscriber)
+    def subscribe(self, subscriber):
+        self.subscriptions.append(subscriber)
 
-    def notify_subscribers(self):
-        for s in subscribers:
-            s.update(message)
+    def notify_subscribers(self, message):
+        for s in self.subscriptions:
+            print("TOPIC: " + message.event_message['topic'])
+            if s.subscriber['topic'] == message.event_message['topic']:
+                print("SUBSCRIPTIONS: ", s.subscriber['app_name'])
+                s.subscriber['app_object'].notify(message)
 
     def print_eventq(self):
         print("Printing event queue:")

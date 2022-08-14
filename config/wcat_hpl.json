@@ -4,5 +4,14 @@
     "folder": "wcat_hpl",
     "tables" : [
         "hpl_cost_center"
+    ],
+    "api_routes" : {
+        "hpl_cost_center_POST": {
+            "type": "API-API",
+            "method": "POST",
+            "args": ["event_message"],
+        },
+    "event_topic_registrations" : [
+        "hpl_cost_center"
     ]
 }
