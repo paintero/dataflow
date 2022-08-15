@@ -11,11 +11,11 @@
         "hpl_consistency_checker_POST": {
             "type": "JSON",
             "method": "POST",
+            "topic": "hpl_cost_center",
             "table": "hpl_consistency_checker",
             "args": ["datafile_name"],
             "event_messages": [
                 {
-                    "topic": "hpl_cost_center",
                     "api_route_callback": "hpl_cost_center_GET",
                     "params": ["business_date", "mis_system"]
                 }
@@ -24,18 +24,21 @@
         "adjustment_cost_center_POST": {
             "type": "JSON",
             "method": "POST",
+            "topic": "frtb_business_hierarchy",
             "table": "adjustment_cost_center",
             "args": ["datafile_name"]
         },
         "frtb_in_scope_map_POST": {
             "type": "JSON",
             "method": "POST",
+            "topic": "frtb_in_scope_map",
             "table": "frtb_in_scope_map",
             "args": ["datafile_name"]
         },
         "hpl_cost_center_GET": {
             "type": "SQL",
             "method": "GET",
+            "topic": "hpl_cost_center",
             "sql_file": "hpl_cost_center_GET",
             "args": ["business_date", "mis_system"]
         }

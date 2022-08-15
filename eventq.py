@@ -4,12 +4,13 @@ import logging
 log = logging.getLogger(__name__)
 
 class Event_Message:
-    def __init__(self, app_object, topic, api_callback):
+    def __init__(self, app_object, topic, api_route, params):
         self.event_message = {
             "id": "",
             "app_author": app_object,
             "topic": topic,
-            "api_callback": api_callback
+            "api_route": api_route,
+            "params": params
         }
 
     def set_id(self, id):
@@ -17,6 +18,19 @@ class Event_Message:
     
     def message(self):
         return str(self.event_message)
+
+    def app_author(self):
+        return self.event_message['app_author']
+
+    def topic(self):
+        return self.event_message['topic']
+
+    def api_route(self):
+        return self.event_message['api_route']
+
+    def params(self):
+        return self.event_message['params']
+
 
 class Subscriber:
     def __init__(self, app_object, app_name, topic):
@@ -28,6 +42,10 @@ class Subscriber:
 
     def string(self):
         return str(self.subscriber)
+
+    def app_object(self):
+        return self.subscriber['app_object']
+    
     
 class EventQ:
     def __init__(self):
@@ -45,11 +63,10 @@ class EventQ:
     def subscribe(self, subscriber):
         self.subscriptions.append(subscriber)
 
+    # run through subscribers to the topic of this message and notify them
     def notify_subscribers(self, message):
         for s in self.subscriptions:
-            print("TOPIC: " + message.event_message['topic'])
             if s.subscriber['topic'] == message.event_message['topic']:
-                print("SUBSCRIPTIONS: ", s.subscriber['app_name'])
                 s.subscriber['app_object'].notify(message)
 
     def print_eventq(self):

@@ -9,8 +9,10 @@
         "hpl_cost_center_POST": {
             "type": "API-API",
             "method": "POST",
-            "args": ["event_message"],
-        },
+            "topic": "hpl_cost_center",
+            "args": ["event_message"]
+        }
+    },
     "event_topic_registrations" : [
         "hpl_cost_center"
     ]
