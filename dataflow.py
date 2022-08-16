@@ -17,19 +17,13 @@ class System:
     def __init__(self, sys_name):
         self.app_objects = {}
         self.sys_name = sys_name
-        self.eventq = EventQ()
+        self.event_q = EventQ()
         logging.info("Created system: " + sys_name)
-
-    def system_name(self):
-        return self.sys_name
-
-    def event_q(self):
-        return self.eventq
 
     def register_application(self, app_name, app_object):
         self.app_objects[app_name] = app_object
         msg = "Registered Application " + app_name
-        msg += " with System " + self.system_name()
+        msg += " with System " + self.sys_name
         logging.info(msg)
 
 
@@ -40,84 +34,77 @@ class App:
     def __init__(self, application_name, system_object):
         logging.info("Creating App: " + application_name + ".")
         # so the app knows which system it is part of
-        self._parent_system = system_object
+        self.parent_system = system_object
         self.load_config(application_name)
-        self.app_base_folder = "config/" + self.config['folder']
         self.create_tables()
         self.create_api_routes()
         self.subscribe_to_event_topics()
         # so the system knows which apps it has
         system_object.register_application(application_name, self)
 
-    def app_name(self):
-        return self.config['name']
 
-    def app_folder(self):
-        return self.app_base_folder
+    # load the app config from json file
+    def load_config(self, app_name):
+        self.config = general.load_json_file("app", app_name, "config")
+        self.app_name = self.config['app_name']
+        self.app_folder = "config/" + self.config['app_folder']
+        if 'event_topic_subscriptions' in self.config:
+            self.event_topic_subscriptions = self.config['event_topic_subscriptions']
 
-    def event_registrations(self):
-        return self.config['event_topic_registrations']
-
-    def parent_system(self):
-        return self._parent_system
 
     def subscribe_to_event_topics(self):
-        if 'event_topic_registrations' in self.config:
+        if 'event_topic_subscriptions' in dir(self):
             logging.info("Registering event Q subscriptions")
-            for topic in self.event_registrations():
-                s = Subscriber(self, self.app_name(), topic)
-                self.parent_system().event_q().subscribe(s)
-                logging.info("Subscribing App " + self.app_name() + " to event Q topic " + topic)
+            for topic in self.event_topic_subscriptions:
+                s = Subscriber(self, self.app_name, topic)
+                self.parent_system.event_q.subscribe(s)
+                logging.info("Subscribing App " + self.app_name + " to event Q topic " + topic)
 
     # called by the eventQ to pass in a message which then fires the
     # appropriate api call to fetch the updated data
     def notify(self, message):
         print("EXECUTING API CALLBACK")
-        print(message.message())
-        message.app_author().api_call(message.api_route(), *message.params())
+        print(message.display())
+        message.app_author.api_call(self, message.api_route, *message.params)
     
-    # load the app config from json file
-    def load_config(self, app_name):
-        self.config = general.load_json_file("app", app_name, "config")
     
     def table_objects(self):
         return self._table_objects
     
     # load and create all of the tables in this app
     def create_tables(self):
-        logging.info("Creating tables for App: " + self.app_name())
+        logging.info("Creating tables for App: " + self.app_name)
         self._table_objects = {}
         for table in self.config['tables']:
             self._table_objects[table] = Table(table, self)
 
-    def api_route_objects(self):
-        return self._api_route_objects
     
     #  load and create all of the api_routes in this app
     def create_api_routes(self):
-        logging.info("Creating API routes for App: " + self.app_name())
-        self._api_route_objects = {}
+        logging.info("Creating API routes for App: " + self.app_name)
+        self.api_route_objects = {}
         if 'api_routes' in self.config:
             for api_route in self.config['api_routes'].keys():
-                self._api_route_objects[api_route] = Api_Route(self, api_route, self.config["api_routes"][api_route]) 
+                self.api_route_objects[api_route] = Api_Route(self, api_route, self.config["api_routes"][api_route]) 
         else:
-            logging.info("There are no API routes defined for app " + self.app_name())
+            logging.info("There are no API routes defined for app " + self.app_name)
 
     # check if api route name provided to the handler is that of an existing api route
     def is_api_route(self, api_route):
         return api_route in self.config['api_routes'].keys()
 
     # handle an api call
-    def api_call(self, api_route, *args):
-        logging.info("Handling API call for App[" + self.app_name()
-                     + "]: " + api_route)
+    def api_call(self, calling_app, api_route, *args):
+        logging.info("Handling API call for App[" + self.app_name
+                     + "]: " + api_route + " called by " + calling_app.app_name)
         
         #validations
         if not self.is_api_route(api_route):
             general.raise_error("API route does not exist: " + api_route)
 
+        print(calling_app.app_folder)
         # call the API route's exec method
-        self.api_route_objects()[api_route].exec(args)
+        self.api_route_objects[api_route].exec(calling_app, args)
 
 
 class Table:
@@ -127,7 +114,7 @@ class Table:
     def __init__(self, tab_name, app_object):
         logging.info("Creating Table: " + tab_name + ".")
         self.parent_app = app_object
-        self.config = general.load_json_file("table", tab_name, self.parent_app.app_folder())
+        self.config = general.load_json_file("table", tab_name, self.parent_app.app_folder)
         self.create_table()
 
     def table_name(self):
@@ -187,48 +174,44 @@ class Api_Route:
     # initialise api route object and load the api route config json
     def __init__(self, parent_app, api_route, api_route_config):
         # a reference to the parent Application object
-        self._parent_app = parent_app
+        self.parent_app = parent_app
         # the api route name
         self.api_route = api_route
         # the json config for the api taken from the Application config
         self.config = api_route_config
+        self.api_method = self.config['method']
         # the topic which this route covers
         if 'topic' in self.config:
             self.topic = self.config['topic']
         else:
             msg = "API route " + self.api_route
-            msg += " in application " + self.parent_app.app_name()
+            msg += " in application " + self.parent_app.app_name
             msg += " does not have a topic defined."
             general.raise_error(msg)
         
         logging.info("Creating API route: " + self.api_route)
         self.validate_config()
 
-    def api_method(self):
-        return self.config['method']
-
-    def parent_app(self):
-        return self._parent_app
 
     def validate_config(self):
         # check the api route table matches a table object in the app
         # if the api is a straight table load from JSON data file
-        if self.api_method() == 'JSON':
+        if self.api_method == 'JSON':
             table_in_config = self.config['table']
-            list_of_tables_in_parent_app = self.parent_app().table_objects().keys()
+            list_of_tables_in_parent_app = self.parent_app.table_objects().keys()
             if not table_in_config in list_of_tables_in_parent_app:
                 msg = "Table [" + self.config['table'] 
                 msg += "] referenced in API route [" + self.api_route
-                msg += "] is not a valid table in app [" + self.parent_app().app_name() + "]"
+                msg += "] is not a valid table in app [" + self.parent_app.app_name + "]"
                 general.raise_error(msg)
 
             # check the api fields match fields on the table
             list_of_api_route_fields = self.config['fields']
-            list_of_table_object_fields = self.parent_app().table_objects()[table_in_config].fields()
+            list_of_table_object_fields = self.parent_app.table_objects()[table_in_config].fields()
             missing_fields = general.elements_from_arr1_not_in_arr2(list_of_api_route_fields, list_of_table_object_fields)
             if len(missing_fields) > 0:
                 msg = "Fields in the API route [" + self.api_route
-                msg += "] for App [" + self.parent_app().config['name']
+                msg += "] for App [" + self.parent_app.app_name
                 msg += "] are not in the table: " + str(missing_fields)
                 general.raise_error(msg)
     
@@ -246,7 +229,7 @@ class Api_Route:
     def validate_data_fields_match_table_fields(self):    
         # check that the field names in the datafile match those in the table definition
         fields_in_data_file = self.exec_params["json_data_file"]['fields']
-        fields_in_table = self.parent_app().table_objects()[self.config['table']].fields()
+        fields_in_table = self.parent_app.table_objects()[self.config['table']].fields()
         extra_fields_in_data_file = general.elements_from_arr1_not_in_arr2(fields_in_data_file, fields_in_table)
         fields_missing_from_data_file = general.elements_from_arr1_not_in_arr2(fields_in_table, fields_in_data_file)
         msg = ""
@@ -289,19 +272,19 @@ class Api_Route:
 
     def update_eventq(self):
         if 'event_messages' in self.exec_params['json_data_file']:
-            parent_app_object = self.parent_app()
+            parent_app_object = self.parent_app
             for em in self.exec_params['json_data_file']['event_messages']:
                 topic = em['topic']
                 api_route = em['api_route']
                 params = em["params"]
                 eventm = Event_Message(parent_app_object, topic, api_route, params)
-                self.parent_app().parent_system().event_q().append(eventm)
+                self.parent_app.parent_system.event_q.append(eventm)
         else:
             pass    
 
     # execute the api route with the parameters passed in
-    def exec(self, args):
-        logging.debug("Executing API: " + self.api_route)
+    def exec(self, calling_app, args):
+        logging.debug("Executing API: " + self.api_route + " called by App [" + calling_app.app_name + "]")
         self.exec_params = {} # use this to hold the parameters associated with a specific api route execution
         self.exec_params["args"] = {} # this will hold the API arguments as name-value pairs
         
@@ -310,7 +293,7 @@ class Api_Route:
             # POST data from a JSON data file
             # The api route fields are expected to be the same as the table def
             self.exec_params["json_data_file_name"] = args[0]
-            self.exec_params["json_data_file"] = general.load_json_file('data', self.exec_params["json_data_file_name"], self.parent_app().app_folder())
+            self.exec_params["json_data_file"] = general.load_json_file('data', self.exec_params["json_data_file_name"], self.parent_app.app_folder)
             self.validate_json_data_file()
             self.load_data_from_json()
             self.update_eventq()
@@ -324,19 +307,20 @@ class Api_Route:
             for n in range(0, len(args)):
                 self.exec_params["args"][self.config["args"][n]] = args[n]
             logging.debug(self.exec_params["args"])
-            sql = general.load_text_file(self.config['sql_file'], self.parent_app().app_folder())
+            sql = general.load_text_file(self.config['sql_file'], self.parent_app.app_folder)
             logging.debug(sql)
             
             results = general.exec_sql(sql, self.exec_params["args"])
             # print(results)
             # save results to a json data file
-            json_results = json.dumps(results)
-            json_file_name = self.topic
+            json_results = json.dumps(results, indent=2)
+            output_file_name = self.topic
             for arg in self.exec_params['args']:
-                json_file_name += "_"
-                json_file_name += str(self.exec_params['args'][arg])
-            print("FILE NAME: " + json_file_name)
-            print("App folder: " + self.parent_app().app_folder())
-
-
+                output_file_name += "_"
+                output_file_name += str(self.exec_params['args'][arg])
+            output_file_name = calling_app.app_folder + "/GET_requests/" + output_file_name + ".json"
+            print("FILE NAME: " + output_file_name)
+            with open(output_file_name, 'w') as f:
+                f.write(json_results)
+            
 

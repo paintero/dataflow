@@ -10,7 +10,7 @@ import json
 # defined in the main module
 log = logging.getLogger(__name__)
 
-class HaltException(Exception): pass
+#class HaltException(Exception): pass
 
 # General function to log an error, print it, and exit the program
 def raise_error(msg):

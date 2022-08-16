@@ -1,0 +1,160 @@
+{
+  "headings": [
+    "business_date",
+    "sub_desk_id",
+    "sub_desk_name",
+    "frtb_scope",
+    "frtb_cost_center_classification",
+    "frtb_in_scope",
+    "cost_center_id",
+    "pnl_attribute",
+    "finance_pnl_usd",
+    "constructed_pnl_usd"
+  ],
+  "data": [
+    [
+      "2022-06-27",
+      "358092",
+      "EUR - Vanilla Options",
+      "IMA",
+      "Trading Book",
+      "IN SCOPE",
+      "48674",
+      "ATM Vol",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "358092",
+      "EUR - Vanilla Options",
+      "IMA",
+      "Trading Book",
+      "IN SCOPE",
+      "48674",
+      "Basis",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "358092",
+      "EUR - Vanilla Options",
+      "IMA",
+      "Trading Book",
+      "IN SCOPE",
+      "48674",
+      "Credit",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "358092",
+      "EUR - Vanilla Options",
+      "IMA",
+      "Trading Book",
+      "IN SCOPE",
+      "48674",
+      "Interest Rate",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "375427",
+      "Structured Financing_US",
+      "",
+      "Non Trading Book",
+      "OUT OF SCOPE",
+      "40194",
+      "ATM Vol",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "375427",
+      "Structured Financing_US",
+      "",
+      "Non Trading Book",
+      "OUT OF SCOPE",
+      "40194",
+      "Basis",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "375427",
+      "Structured Financing_US",
+      "",
+      "Non Trading Book",
+      "OUT OF SCOPE",
+      "40194",
+      "Credit",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "375427",
+      "Structured Financing_US",
+      "",
+      "Non Trading Book",
+      "OUT OF SCOPE",
+      "40194",
+      "Interest Rate",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "375427",
+      "Structured Financing_US",
+      "SA - IMA Candidate",
+      "Trading Book",
+      "IN SCOPE",
+      "46839",
+      "ATM Vol",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "375427",
+      "Structured Financing_US",
+      "SA - IMA Candidate",
+      "Trading Book",
+      "IN SCOPE",
+      "46839",
+      "Basis",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "375427",
+      "Structured Financing_US",
+      "SA - IMA Candidate",
+      "Trading Book",
+      "IN SCOPE",
+      "46839",
+      "Credit",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "375427",
+      "Structured Financing_US",
+      "SA - IMA Candidate",
+      "Trading Book",
+      "IN SCOPE",
+      "46839",
+      "Interest Rate",
+      1000,
+      1000
+    ]
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "headings": [
+    "business_date",
+    "sub_desk_id",
+    "sub_desk_name",
+    "frtb_scope",
+    "frtb_cost_center_classification",
+    "frtb_in_scope",
+    "cost_center_id",
+    "pnl_attribute",
+    "finance_pnl_usd",
+    "constructed_pnl_usd"
+  ],
+  "data": [
+    [
+      "2022-06-27",
+      "446296",
+      "EQ DS EU AMC D1",
+      "IMA",
+      "Trading Book",
+      "IN SCOPE",
+      "44325",
+      "ATM Vol",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "446296",
+      "EQ DS EU AMC D1",
+      "IMA",
+      "Trading Book",
+      "IN SCOPE",
+      "44325",
+      "Basis",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "446296",
+      "EQ DS EU AMC D1",
+      "IMA",
+      "Trading Book",
+      "IN SCOPE",
+      "44325",
+      "Credit",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "446296",
+      "EQ DS EU AMC D1",
+      "IMA",
+      "Trading Book",
+      "IN SCOPE",
+      "44325",
+      "Interest Rate",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "446296",
+      "EQ DS EU AMC D1",
+      "",
+      "Non Trading Book",
+      "OUT OF SCOPE",
+      "44326",
+      "ATM Vol",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "446296",
+      "EQ DS EU AMC D1",
+      "",
+      "Non Trading Book",
+      "OUT OF SCOPE",
+      "44326",
+      "Basis",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "446296",
+      "EQ DS EU AMC D1",
+      "",
+      "Non Trading Book",
+      "OUT OF SCOPE",
+      "44326",
+      "Credit",
+      1000,
+      1000
+    ],
+    [
+      "2022-06-27",
+      "446296",
+      "EQ DS EU AMC D1",
+      "",
+      "Non Trading Book",
+      "OUT OF SCOPE",
+      "44326",
+      "Interest Rate",
+      1000,
+      1000
+    ]
+  ]
+}

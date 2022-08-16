@@ -1,7 +1,7 @@
 {
-    "name": "meg_hpl",
+    "app_name": "meg_hpl",
     "object_type": "app_def",
-    "folder": "meg_hpl",
+    "app_folder": "meg_hpl",
     "tables" : [
         "hpl_consistency_checker",
         "adjustment_cost_center",
