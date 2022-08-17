@@ -10,10 +10,14 @@
             "type": "API-API",
             "method": "POST",
             "topic": "hpl_cost_center",
+            "table": "hpl_cost_center",
             "args": ["event_message"]
         }
     },
     "event_topic_subscriptions" : [
-        "hpl_cost_center"
+        {
+            "topic" : "hpl_cost_center",
+            "post_api_route": "hpl_cost_center_POST" 
+        }
     ]
 }

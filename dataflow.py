@@ -55,18 +55,29 @@ class App:
     def subscribe_to_event_topics(self):
         if 'event_topic_subscriptions' in dir(self):
             logging.info("Registering event Q subscriptions")
-            for topic in self.event_topic_subscriptions:
-                s = Subscriber(self, self.app_name, topic)
+            for subscription in self.event_topic_subscriptions:
+                s = Subscriber(self, self.app_name, subscription['topic'])
                 self.parent_system.event_q.subscribe(s)
-                logging.info("Subscribing App " + self.app_name + " to event Q topic " + topic)
+                logging.info("Subscribing App " + self.app_name + " to event Q topic " + subscription['topic'])
 
     # called by the eventQ to pass in a message which then fires the
     # appropriate api call to fetch the updated data
     def notify(self, message):
         print("EXECUTING API CALLBACK")
         print(message.display())
+        # call the GET api route to retrieve the new data from the
+        # originating app
         message.app_author.api_call(self, message.api_route, *message.params)
-    
+        # now call the PUT api route on this app to load the data
+        # the PUT api route to use is defined in the app config event subscriptions
+        print("*** ", message.topic)
+        # look up the topic in the event_topic_subscriptions
+        if 'event_topic_subscriptions' in dir(self):
+            for subscription in self.event_topic_subscriptions:
+                if message.topic == subscription['topic']:
+                    print("PUT api route: " + subscription['post_api_route'])
+
+
     
     def table_objects(self):
         return self._table_objects
@@ -311,7 +322,7 @@ class Api_Route:
             logging.debug(sql)
             
             results = general.exec_sql(sql, self.exec_params["args"])
-            # print(results)
+            
             # save results to a json data file
             json_results = json.dumps(results, indent=2)
             output_file_name = self.topic
@@ -322,5 +333,7 @@ class Api_Route:
             print("FILE NAME: " + output_file_name)
             with open(output_file_name, 'w') as f:
                 f.write(json_results)
+
+            
             
 
