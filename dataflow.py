@@ -60,23 +60,28 @@ class App:
                 self.parent_system.event_q.subscribe(s)
                 logging.info("Subscribing App " + self.app_name + " to event Q topic " + subscription['topic'])
 
+    # lookup a topic in the subscriptions and return the subcription dict
+    def lookup_event_topic_subscription(self, topic):
+        if 'event_topic_subscriptions' in dir(self):
+            for subscription in self.event_topic_subscriptions:
+                if topic == subscription['topic']:
+                    return subscription
+            return False
+
+
     # called by the eventQ to pass in a message which then fires the
     # appropriate api call to fetch the updated data
     def notify(self, message):
-        print("EXECUTING API CALLBACK")
-        print(message.display())
         # call the GET api route to retrieve the new data from the
         # originating app
         message.app_author.api_call(self, message.api_route, *message.params)
         # now call the PUT api route on this app to load the data
         # the PUT api route to use is defined in the app config event subscriptions
-        print("*** ", message.topic)
-        # look up the topic in the event_topic_subscriptions
-        if 'event_topic_subscriptions' in dir(self):
-            for subscription in self.event_topic_subscriptions:
-                if message.topic == subscription['topic']:
-                    print("PUT api route: " + subscription['post_api_route'])
-
+        subscription = self.lookup_event_topic_subscription(message.topic)
+        post_api_route = subscription['post_api_route']
+        print("post api route: ", post_api_route)
+        print("params: ", *message.params)
+        self.api_call(self, post_api_route, )
 
     
     def table_objects(self):
@@ -113,7 +118,6 @@ class App:
         if not self.is_api_route(api_route):
             general.raise_error("API route does not exist: " + api_route)
 
-        print(calling_app.app_folder)
         # call the API route's exec method
         self.api_route_objects[api_route].exec(calling_app, args)
 
@@ -191,6 +195,7 @@ class Api_Route:
         # the json config for the api taken from the Application config
         self.config = api_route_config
         self.api_method = self.config['method']
+        self.api_type = self.config['type']
         # the topic which this route covers
         if 'topic' in self.config:
             self.topic = self.config['topic']
@@ -300,7 +305,7 @@ class Api_Route:
         self.exec_params["args"] = {} # this will hold the API arguments as name-value pairs
         
         # if this is a route for a POST for a JSON data file
-        if self.config["method"] == "POST" and self.config["type"] == "JSON":
+        if self.api_method == "POST" and self.api_type == "JSON":
             # POST data from a JSON data file
             # The api route fields are expected to be the same as the table def
             self.exec_params["json_data_file_name"] = args[0]
@@ -310,7 +315,7 @@ class Api_Route:
             self.update_eventq()
         
         # if this is a GET using an SQL script
-        elif self.config["method"] == "GET" and self.config["type"] == "SQL":
+        elif self.api_method == "GET" and self.api_type == "SQL":
             # check we have the number of args expected by the API
             if len(args) != len(self.config['args']):
                 general.raise_error("Missing arguments in API call " + self.api_route)
@@ -330,7 +335,6 @@ class Api_Route:
                 output_file_name += "_"
                 output_file_name += str(self.exec_params['args'][arg])
             output_file_name = calling_app.app_folder + "/GET_requests/" + output_file_name + ".json"
-            print("FILE NAME: " + output_file_name)
             with open(output_file_name, 'w') as f:
                 f.write(json_results)
 
